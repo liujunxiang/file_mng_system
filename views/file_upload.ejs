@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>文件上传</title>
+    <%include style.ejs %>
+	<link rel="stylesheet" href="/bootstrap/buttons.css"> 
+</head>
+<script>
+function upload(input) {
+	//支持chrome IE10
+	if (window.FileReader) {
+		var file = input.files[0];
+		filename = file.name.split(".")[0];
+		var reader = new FileReader();
+		reader.onload = function() {
+			//console.log(this.result)
+            //alert('1')
+			//alert(this.result);
+            $("#msg_error_or_debug").html( this.result ) ;
+		}
+		reader.readAsText(file);
+	} 
+	//支持IE 7 8 9 10
+	else if (typeof window.ActiveXObject != 'undefined'){
+		var xmlDoc; 
+		xmlDoc = new ActiveXObject("Microsoft.XMLDOM"); 
+		xmlDoc.async = false; 
+		xmlDoc.load(input.value); 
+        $("#msg_error_or_debug").html( xmlDoc.xml  ) ;
+	} 
+	//支持FF
+	else if (document.implementation && document.implementation.createDocument) { 
+		var xmlDoc; 
+		xmlDoc = document.implementation.createDocument("", "", null); 
+		xmlDoc.async = false; 
+		xmlDoc.load(input.value); 
+		//alert(xmlDoc.xml);
+        $("#msg_error_or_debug").html( xmlDoc.xml  ) ;
+	} else { 
+		alert('error'); 
+	} 
+}
+
+function debug(  str )
+{
+    document.getElementById("msg_error_or_debug").innerText=str;  
+}
+function  f()
+{
+    var data = new FormData();
+    var files = $('#file1')[0].files; 
+	//alert(JSON.stringify( files )  )
+    if (files.length > 0) {
+        data.append('codecsv',files[0]);
+    }
+    else
+    {
+         document.getElementById("code").innerHTML="文件没有指定"
+         return
+    }
+    
+   /* var files2 = $('#file2')[0].files; 
+    if (files2.length > 0) {
+        data.append('codecsv1',files2[0]);
+    }
+    else
+    {
+         document.getElementById("code2").innerHTML="文件没有指定"
+         return
+    }*/
+    var file_title = $("#file_title").val()
+    if(file_title==null || file_title=="" )
+    {
+        delimiter=""
+    }
+    data.append("title",file_title)
+	
+	var file_desc = $("#file_desc").val()
+    if(file_desc==null || file_desc=="" )
+    {
+        file_desc=""
+    }
+    data.append("desc",file_desc)
+    $.ajax({
+    cache: false,
+    type: 'post',
+    dataType: 'json',
+    url:'/u',			        
+    data : data,
+    contentType: false,
+    processData: false,
+    success : function ( data) 
+    {
+        if( typeof(data.res) != 'undefined' )
+        {
+            if( data.res == 200  )
+            {
+                document.getElementById("result").innerHTML="上传成功"
+            }
+            else
+            {
+                document.getElementById("result").innerHTML="上传失败";
+            }
+        }
+        
+    }
+    });
+}
+</script>
+<body>
+
+<ul class="list-group" id="list_groups">
+    
+	<li class="list-group-item">
+        <label for="firstname" class="col-sm-2 control-label">标题</label>
+        <input type="text" id="file_title" placeholder="请输入文件标题"></input>
+    </li>
+	
+    <li class="list-group-item">    
+    <label for="firstname" class="col-sm-2 control-label">上传的文件1</label>
+    <input type="file"  id="file1" name="file1"/ ><span ><font id="code" color="#FF0000"></font></span>
+    </li>
+
+	
+
+
+    <li class="list-group-item">
+        <label for="firstname" class="col-sm-2 control-label">文件描述</label>
+        <input type="text" id="file_desc" placeholder="请输入文件描述"></input>
+    </li>
+    
+    
+</ul>
+<textarea id="msg_error_or_debug" cols="190" rows="10" ></textarea></br>
+<a onclick="f()" class="button button-raised button-royal">提交</a>
+<span ><font id="result" color="#FF0000"></font></span>
+</body>
+</html>

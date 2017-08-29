@@ -1,0 +1,26 @@
+{
+  "name": "personalrecommendmng",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node ./bin/www"
+  },
+  "dependencies": {
+    "body-parser": "~1.16.0",
+    "cookie-parser": "~1.4.3",
+    "debug": "~2.6.0",
+    "ejs": "~2.5.5",
+    "express": "~4.14.1",
+    "morgan": "~1.7.0",
+    "serve-favicon": "~2.3.2" ,
+    "colors":"~1.1.2",
+    "node-uuid":"~1.4.7",
+    "redis":"~2.6.5",
+    "pg":"~6.1.3",
+    "mongodb":"~2.2.24",
+    "request":"~2.81.0",
+    "should":"~11.2.1",
+    "supertest":"~3.0.0",
+    "silly-datetime":"~0.1.2"
+  }
+}

@@ -1,0 +1,13 @@
+.log_warnning {
+	font-weight:bold;
+	color:#ff9955;
+     width:100%;/*自动适应父布局宽度*/
+    overflow:auto;
+    overflow-y:visible;
+    word-break:break-all
+}
+.table_caption{
+font-family:Georgia;
+font-size: 25px;
+text-align: left;
+}

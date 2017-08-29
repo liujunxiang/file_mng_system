@@ -1,0 +1,120 @@
+<html>  
+    <head>  
+        <%include style.ejs %>
+        <script type="text/javascript">
+var _d = new Object
+var UserDataSet = <%- user_dataset %>
+for ( var i = 0 ; i <UserDataSet.length ;i++ )
+{
+    for( var  j = 0 ; j <UserDataSet[i].length ;j++ )
+    {
+        
+        if ( typeof( UserDataSet[i][j] ) == typeof( new Object()  ))
+        {
+            UserDataSet[i][j]  = JSON.stringify ( UserDataSet[i][j]  )
+        }
+    }
+    
+}
+user_column=<%- user_column %>
+var obj=new Object()
+obj.title=""
+user_column.push( obj )
+
+
+var timer 
+var winOpen 
+function IfWindowClosed() { 
+if (winOpen.closed == true) { 
+//document.fm_Info.txtValue.value="child closed" 
+self.location='/rule/filter/list'
+window.clearInterval(timer) 
+} 
+
+} 
+
+
+$(document).ready(function() 
+	{
+		var tables=$('#user').DataTable( {
+			data: UserDataSet,
+			columns: user_column,
+			"searching":false,
+			"autoWidth":true,
+			"info":false,
+			"lengthChange":false,
+			"columnDefs": [{
+						"targets": -1,//删除
+						"data": null,
+						"defaultContent": "<button id='delrow' class='btn btn-primary' type='button'><i class='fa fa-trash-o'></i>删除?</button>"
+				},
+				{
+					"targets": 0,//第一列隐藏
+					"visible": false,
+					"searchable": false
+				},
+				{
+					"targets": 4,//第一列隐藏
+					"visible": false,
+					"searchable": false
+				},
+				{
+				"targets": 3,
+				"mRender":function(data,type,full){
+					var str='<a href="/'+full[4]+'">'+data+"</a>"
+					return str
+				 }
+				}
+				]
+		} );	
+		$('#user tbody').on( 'click', 'button#delrow', function () {
+            var data = tables.row( $(this).parents('tr') ).data();
+			//alert(data)
+			$.ajax({
+                url: '/delrow',
+                type: 'POST',
+                dataType: 'json',
+                data: {_id: data[0]},
+            })
+            .done(function(data) {
+				//alert( data.res )
+                if (data.res==200) { 
+					self.location='/'
+                };
+            })
+            .fail(function() {
+                alert("删除数据失败");
+            });
+        });
+		$('#user tbody').on( 'click', 'button#edit', function () {
+            var data = tables.row( $(this).parents('tr') ).data();
+           // alert(data)
+            url="/rule/filter/editor?"+"id="+data[0]
+            str="/rule/filter/editor?" + encodeURIComponent("id="+data[0]+"&t="+data[1]) 
+            winOpen=window.open (str, "newwindow", "height=400, width=1000， toolbar =no, menubar=no, scrollbars=no, resizable=no, location=no, status=no") //写成一行
+            timer=window.setInterval("IfWindowClosed()",500); 
+		});
+	} 
+
+);
+
+
+
+        </script>
+        <style>
+        .table_caption{
+        font-family:Georgia;
+        font-size: 25px;
+		text-align: left;
+        }
+        </style>
+    </head>  
+    <body> 
+<p class="table_caption"></p>    
+<table id="user" class="display" width="100%"></table>
+</br>
+</br>
+</br>
+
+    </body>  
+</html>  
